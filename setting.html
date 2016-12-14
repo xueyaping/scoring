@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="薛亚平">
+    <title>帐户设置</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+
+        body{font-family: "Microsoft Yahe", "微软雅黑" , Helvetica, Arial, sans-serif;font-weight: normal}
+        h1,h2,h3,h4,{font-weight: 100}
+        .navbar{border-radius: 0;}
+        .navbar-default{background: none;border-color:transparent; border-bottom-color: #f5f5f5; -webkit-box-shadow: 0 2px 10px #eee;
+            box-shadow: 0 2px 10px #eee;}
+        .list-group ul li.on{font-weight:bold;}
+        .bs-docs-section{margin-top: 40px;}
+        .row{margin-left:0;margin-right: 0 }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container" >
+        <div class="navbar-header">
+            <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="./panel.html"><img src="img/logo.png" class="navbar-brand"></a>
+        </div>
+        <div class="navbar-collapse collapse" role="navigation" style="height:1px;"><!--栏目列表-->
+            <ul class="nav navbar-nav pull-right">
+                <li class=""><a href="./panel.html" ><i class="glyphicon glyphicon-chevron-left"></i> back</a></li>
+                <li class="dropdown">
+                    <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span id="userName"></span> <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="active"><a href="">账户设置</a></li>
+                        <!--<li class="divider"></li>
+                        <li ><a href="">修改密码</a></li>-->
+                    </ul>
+                </li>
+                <li><a><button id="logout-btn" class="btn btn-default btn-sm" style="border-color:#FF5722">退 出</button></a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <!-------------------------------密码设置--------------------------------------------------------->
+        <div class="container-fluid">
+                <div id="editPsBox" class="bs-docs-section col-md-6 col-md-offset-3">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tabOne" data-toggle="tab">修改密码</a></li>
+                        <li><a href="#tabTwo" data-toggle="tab">修改邮箱</a></li>
+
+                    </ul>
+                    <div id="myTabContent" class="tab-content">
+                        <div id="tabOne" class="bs-docs-section tab-pane fade in active">
+                            <form id="editPsForm" class="form-horizontal" name="form" action="#" method="post">
+
+                                <div class="form-group">
+                                    <label for="newPassword" class="col-sm-2 control-label text-muted">新密码</label>
+                                    <div class="col-sm-10">
+                                        <input id="newPassword" class="form-control input-lg" type="text" name="password"  placeholder="">
+                                    </div>
+                                </div>
+                                <div class="form-group text-center">
+                                    <button id="edit-btn" class="btn btn-primary">修改密码</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="tabTwo" class="bs-docs-section tab-pane fade">
+                            <form id="changeEmailForm" class="form-horizontal" name="form" action="#" method="post">
+                                <div class="form-group">
+                                    <label for="chgEmail" class="col-sm-2 control-label text-muted">邮&nbsp;&nbsp;箱</label>
+                                    <div class="col-sm-10">
+                                        <input id="chgEmail" class="form-control input-lg" type="email" name="email"  placeholder="example@example.com">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="chgPassword" class="col-sm-2 control-label text-muted">密&nbsp;&nbsp;码</label>
+                                    <div class="col-sm-10">
+                                        <input id="chgPassword" class="form-control input-lg" type="password" name="password"  placeholder="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newEmail" class="col-sm-2 control-label text-muted">新邮箱</label>
+                                    <div class="col-sm-10">
+                                        <input id="newEmail" class="form-control input-lg" type="text" name="email"  placeholder="example@example.com">
+                                    </div>
+                                </div>
+                                <div class="form-group text-center">
+                                    <button id="change-btn" class="btn btn-success">修改邮箱</button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div><!----密码设置---->
+                </div>
+            </div>
+        </div>
+
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+<script src="https://cdn.wilddog.com/sdk/js/2.1.2/wilddog.js"></script>
+<script src="./js/bootstrapValidator.js"></script><!--表单验证-->
+<script src="./layer/layer.js"></script>
+<script src="js/demon.js"></script>
+</body>
+</html>
