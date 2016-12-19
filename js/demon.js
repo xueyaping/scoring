@@ -15,9 +15,11 @@ var oldScore=new Array();
 var newScore=new Array();
 var usersA=new Array();
 var usersB=new Array();
+var roles=new Array();
 var scoArr=new Array();
 var addSco=new Array();
 var e,h,i, j,aLink,ok;
+var actors=[];
 var curIds=[];
 var raters=[];
 var scoreIds=[];
@@ -38,17 +40,26 @@ function register(){
     group = $('#t_group').val();
     tip=$('#reg-alert');
     tiptxt=$('#txtChange');
-
-    wilddog.auth().createUserWithEmailAndPassword (nemail,npassword).then(function(user){
+    actors=$(":radio:checked").val();//角色选择
+    if(actors=="leader"){
+        var x;
+        var person=prompt("请输入验证码"," ");
+        if (person!=''&&person!=null&&person==group+obj){
+            x="身份验证成功";
+            layer.msg(x);
+            yes= true
+        }else{
+            x="身份验证失败";
+            layer.msg(x);
+            yes= false
+        }
+        /*layer.prompt(function(val, index){
+            layer.msg('得到了'+val);
+            layer.close(index);
+        });*/
+}
+   if( yes!=false) wilddog.auth().createUserWithEmailAndPassword (nemail,npassword).then(function(user){
         $("#regForm").submit();
-
-        /*弹出层  layer.alert(user.email+'恭禧，您已注册成功!',{
-         skin: 'layui-layer-molv' //样式类名
-         ,closeBtn:0},
-         function() {
-         top.location = './login.html' ;//iframe的url
-         }
-         );*/
         var x = 60;
         var y = 0;
 
@@ -56,20 +67,23 @@ function register(){
        // var rand=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19,19,20];
 
         var regRef=wilddog.sync().ref("user/info");
-        regInfo={name:nname,email:nemail,obj:obj,group:group,id:obj+group};
+        var leaderRef=wilddog.sync().ref("user/leader");
+        regInfo={name:nname,email:nemail,obj:obj,group:group,id:obj+group,role:actors};
         objid=regInfo.obj;
         grpid=regInfo.group;
         rmail=regInfo.email;
         keyname=regInfo.name;
+        roles=regInfo.role;
         /*var num = [0,1,2,3,4,5,6,7,8,9,10,11,12];
         while(num.length) {
             rand=num.splice(parseInt(Math.random() * num.length), 1)[0];
 
         }*/
         userids = parseInt( regInfo.obj) + parseInt( regInfo.group)+ rand;//产品组+技术组+随机数
-        regRef.child(keyname).update({ids:userids,name:keyname,email:rmail,obj:objid,group:grpid,score:""});
-        layer.alert("恭喜您，注册成功！");
+        regRef.child(keyname).update({ids:userids,name:keyname,email:rmail,obj:objid,group:grpid,role:roles,score:""});
+       leaderRef.child(keyname).update({ids:userids,name:keyname,email:rmail,obj:objid,group:grpid,role:roles,score:""});
 
+       layer.alert("恭喜您，注册成功！");
     }).catch(function(error){
 
         if (error.code == "email_taken") {
@@ -191,10 +205,11 @@ function currentIds(user){
             uemail=user.email;
             i=0;
                 if (uemail == userVal.email) {
-                   usersB[i++] ={name:userVal.email,ids:userVal.ids};
+                   usersB[i++] ={name:userVal.email,ids:userVal.ids,role:userVal.role};
                     raters[uemail]= userVal.name;
                     curIds[uemail] = userVal.ids;
-                    console.log(curIds[uemail]);
+                    actors[uemail]= userVal.role;
+                    console.log(curIds[uemail],raters[uemail],actors[uemail]);
                 }
 
         })
@@ -202,19 +217,64 @@ function currentIds(user){
 }
 
 //curIds传参(前登录用户ids值)，筛选与当前用户同一范围的用户数据
-function listShow(user,curIds){
-    i=0;
-    var logRef = wilddog.sync().ref("user/info");
-    logRef.orderByKey().once('value', function (snapshot) {
-        snapshot.forEach(function (snap) {
-            userKey = snap.key();
-            userVal = snap.val();
-            keyname = userVal.name;
-            keyIds = userVal.ids;
+function listShow(user,curIds,actors){
 
-            usersA[++i]={name:userVal.name,ids:userVal.ids,score:userVal.score};
+        i=0;h=0;
+        var logRef = wilddog.sync().ref("user/info");
+        logRef.orderByKey().once('value', function (snapshot) {
+            snapshot.forEach(function (snap) {
+                userKey = snap.key();
+                userVal = snap.val();
+                keyname = userVal.name;
+                keyIds = userVal.ids;
 
-            if (( userVal.ids < curIds[uemail] + 50 ) && (userVal.ids > curIds[uemail] - 50)) {//与当前登录者为同一项目组或技术组成员
+                usersA[++i] = {name: userVal.name, ids: userVal.ids, score: userVal.score, role: userVal.role};
+
+                if(uemail !== userVal.email){
+
+
+                    if(actors[uemail]=="leader"&&usersA[i].role == "leader") {
+
+                            td1 = "<td id='td1'>" + usersA[i].ids + "</td>";
+                            td2 = "<td id='td2'>" + usersA[i].name + "</td>";
+                            td3 = "<td id='td3'><input contentEditable='true' type='number' max='10' min='0' style='border: none;'>" + '' + "</input></td>";
+                            td4 = "<td>" + usersA[i].score+"</td>";
+                            if (userVal.role!==null) {
+                                $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td3 + td4 + "</tr>");
+                            }
+
+
+                    }else {
+
+
+                        if (( userVal.ids < curIds[uemail] + 50 ) && (userVal.ids > curIds[uemail] - 50)&&actors[uemail]!=="leader") {
+                            td1 = "<td id='td1'>" + usersA[i].ids + "</td>";
+                            td2 = "<td id='td2'>" + usersA[i].name + "</td>";
+                            td3 = "<td id='td3'><input contentEditable='true' type='number' max='10' min='0' style='border: none;'>" + '' + "</input></td>";
+                            td4 = "<td>" + usersA[i].score+"</td>";
+                            $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td3 + td4 + "</tr>");
+                        } else {
+                            if (curIds[uemail] == "99999") {//当前登录者为管理员账户时，所以成员
+                                td1 = "<td id='td1'>" + usersA[i].ids + "</td>";
+                                td2 = "<td id='td2'>" + usersA[i].name + "</td>";
+                                td3 = "<td id='td3'><input contentEditable='true' type='number' max='10' min='0' style='border: none;'>" + '' + "</input></td>";
+                                td4 = "<td>" + usersA[i].score+"</td>";
+                                timeTitle = yearStr + "年" + monthStr + "月份 ";
+                                $("#groupTxt").text(timeTitle + "用户数据管理");
+                                $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td4 + "</tr>");
+                            }
+                        }
+                    }
+                }
+            });
+
+        });
+
+
+
+
+
+            /*if (( userVal.ids < curIds[uemail] + 50 ) && (userVal.ids > curIds[uemail] - 50)) {//与当前登录者为同一项目组或技术组成员
                 $("#groupTxt").text(" 项目组 / 技术组成员互评");
 
                 td1 = "<td>" + usersA[i].ids + "</td>";
@@ -226,40 +286,27 @@ function listShow(user,curIds){
                     $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td3 + td4 + "</tr>");
 
                 }
+
             }else{
                 if (curIds[uemail]=="99999") {//当前登录者为管理员账户时，所以成员
-                    timeTitle=yearStr+"年"+monthStr+"月份 ";
-                    $("#groupTxt").text(timeTitle+"用户数据管理");
+             timeTitle=yearStr+"年"+monthStr+"月份 ";
+             $("#groupTxt").text(timeTitle+"用户数据管理");
 
-                    td1 = "<td id='td1'>" + usersA[i].ids + "</td>";
-                    td2 = "<td id='td2'>" + usersA[i].name + "</td>";
-                    td3 = "<td id='td4'>" + usersA[i].score+ "</td>";
-                    td4 = "<td id='td3'>" + '' + "</td>";
+             td1 = "<td id='td1'>" + usersA[i].ids + "</td>";
+             td2 = "<td id='td2'>" + usersA[i].name + "</td>";
+             td3 = "<td id='td4'>" + usersA[i].score+ "</td>";
+             td4 = "<td id='td3'>" + '' + "</td>";
 
+             if (uemail !== userVal.email) {
+             $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2+td3+  "</tr>");
 
-                    if (uemail !== userVal.email) {
-                        $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2+td3+  "</tr>");
-                        //在每行创建查看打分记录的按钮
-                       /* e = document.createElement("input");
-                        e.type = "button";
-                        e.id = "sortBtn";
-                        e.class = userKey;
-                        e.value = "查看";
-                        $("#"+userKey).find("#td4").append((e));
-                        //------为按钮创建样式------------
-                        var style = document.createElement('style');
-                        style.type = 'text/css';
-                       // style.innerHTML="#sort-btn{ background-color:#24B432;color:white;width: 60px; height:30px;text-align:center;border: 1px solid #efefef }";
-                        document.getElementsByTagName('HEAD').item(0).appendChild(style);*/
-                    }
+             }
 
-                }
-            }
+             }
+             }
+*/
 
 
-       });
-
-    });
 }
 //-------------------点击查看按钮，显示个人打分记录--------------------
 $(document).delegate('#sortBtn', 'click',"disabled", function(trKey){
@@ -665,7 +712,7 @@ $(document).ready(function() { //------------------------------表单验证-----
     var stopListen=wilddog.auth().onAuthStateChanged(function (user) {
         if (user!==null) {
            $('#userName').text(user.email);//当前登录用户
-            listShow(currentIds(user),curIds);//显示与当前登录用户同组成员信息
+            listShow(currentIds(user),curIds,actors);//显示与当前登录用户同组成员信息
 
             $("#score-btn").click(function(strKey){//提交分数推送数据
               scoreSnap(strKey);
