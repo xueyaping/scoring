@@ -49,7 +49,7 @@ function register(){
             yes= true
         }else{
             txt="身份验证失败";
-            layer.msg(txt);
+            layer.msg(txt,{icon:5});
             yes= false
         }
         /*layer.prompt(function(val, index){
@@ -58,10 +58,8 @@ function register(){
         });*/
 }
    if( yes!=false) wilddog.auth().createUserWithEmailAndPassword (nemail,npassword).then(function(user){
-        $("#regForm").submit();
-        var x = 50;
+        var x = 20;
         var y = 0;
-
        var rand = parseInt(Math.random() * (x - y + 1) + y);
        // var rand=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19,19,20];
 
@@ -75,17 +73,18 @@ function register(){
         roles=regInfo.role;
         userids = parseInt( regInfo.obj) + parseInt( regInfo.group)+ rand;//产品组+技术组+随机数
         regRef.child(keyname).update({ids:userids,name:keyname,email:rmail,obj:objid,group:grpid,role:roles,score:""});
+       layer.msg("恭喜您，注册成功",{icon:1,time:2000});
+       setTimeout("location.reload()",2000);
 
-       layer.alert("恭喜您，注册成功！");
-    }).catch(function(error){
+   }).catch(function(error){
 
         if (error.code == "email_taken") {
-            layer.msg('此邮箱已经被注册');
+            layer.msg('此邮箱已经被注册',{icon:5});
         }
         else if (error.code == "invalid_email"){
             //tip.show();
             //tiptxt.text('邮箱或密码不合法');
-            layer.msg('邮箱或密码不合法');
+            layer.msg('邮箱或密码不合法',{icon:5});
         }else{
             /*tip.show();
              tiptxt.text("注册失败!")*/
@@ -106,7 +105,7 @@ function logIn(){
             }else{
                 top.location = "./panel.html";
             }
-            $('#logInForm').submit();
+            $("#logInForm").submit();
             console.log(user);
         }).catch(function(err){
             if(oemail.length==0||opassword.length==0){
@@ -212,7 +211,7 @@ function currentIds(user){
 //curIds传参(前登录用户ids值)，筛选与当前用户同一范围的用户数据
 function listShow(user,curIds,actors){
 
-        i=0;h=0;
+        i=0;
         var logRef = wilddog.sync().ref("user/info");
         logRef.orderByKey().once('value', function (snapshot) {
             snapshot.forEach(function (snap) {
@@ -222,55 +221,54 @@ function listShow(user,curIds,actors){
                 keyIds = userVal.ids;
 
                 usersA[++i] = {name: userVal.name, ids: userVal.ids, score: userVal.score, role: userVal.role};
-
                 if(uemail !== userVal.email){
 
-
-                    if(actors[uemail]=="leader"&&usersA[i].role == "leader") {//当前登录用户是主管或项目经理时，生成主管互评表
-                        timeTitle = yearStr + "年" + monthStr + "月份 ";
-                        $("#groupTxt").text(timeTitle + "主管级互评");
-                            td1 = "<td id='td1'>" + usersA[i].ids + "</td>";
+                        if (actors[uemail] == "leader" && usersA[i].role == "leader") {//当前登录用户是主管或项目经理时，生成主管互评表
+                            timeTitle = yearStr + "年" + monthStr + "月份 ";
+                            $("#groupTxt").text(timeTitle + "主管级互评");
+                            td1 = "<td id='td1'>" + $("tr").length + "</td>";
                             td2 = "<td id='td2'>" + usersA[i].name + "</td>";
-                            td3 = "<td id='td3'><input contentEditable='true' type='number' max='10' min='0' style='border: none;'>" + '' + "</input></td>";
-                            td4 = "<td>" + usersA[i].score+"</td>";
-                            if (userVal.role!==null) {
+                            td3 = "<td id='td3'><input contentEditable='true' type='number' maxlength='2' name='num' style='border: none;width: 30px'>" + '' + "</input></td>";
+                            td4 = "<td>" + usersA[i].score + "</td>";
+                            if (userVal.role !== null) {
                                 $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td3 + td4 + "</tr>");
                             }
 
-                    }else {
-
-
-                        if (( userVal.ids <= curIds[uemail] + 50 )&& (userVal.ids >= curIds[uemail] - 50)&&actors[uemail]!=="leader") {
-                            timeTitle = yearStr + "年" + monthStr + "月份 ";
-                            $("#groupTxt").text(timeTitle + "员工互评");
-                            td1 = "<td id='td1'>" + usersA[i].ids + "</td>";
-                            td2 = "<td id='td2'>" + usersA[i].name + "</td>";
-                            td3 = "<td id='td3'><input contentEditable='true' type='number' max='10' min='0' style='border: none;'>" + '' + "</input></td>";
-                            td4 = "<td>" + usersA[i].score+"</td>";
-                            $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td3 + td4 + "</tr>");
                         } else {
-                            if (curIds[uemail] == "99999") {//当前登录者为管理员账户时，所以成员
-                                td1 = "<td id='td1'>" + usersA[i].ids + "</td>";
-                                td2 = "<td id='td2'>" + usersA[i].name + "</td>";
-                                td3 = "<td id='td3'><input contentEditable='true' type='number' max='10' min='0' style='border: none;'>" + '' + "</input></td>";
-                                td4 = "<td>" + usersA[i].score+"</td>";
+
+
+                            if (( userVal.ids <= curIds[uemail] + 50 && userVal.ids < 500) && (userVal.ids >= curIds[uemail] - 50) && actors[uemail] !== "leader") {
                                 timeTitle = yearStr + "年" + monthStr + "月份 ";
-                                $("#groupTxt").text(timeTitle + "互评数据管理");
-                                $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td4 + "</tr>");
-                                $("#countData").text("共 "+usersA.length+"条 数据")
-                            }
-                            if (userVal.role!=="leader"&&userVal.ids < 100&&actors[uemail]!=="leader") {//当前登录者为管理员账户时，所以成员
-                                td1 = "<td id='td1'>" + usersA[i].ids + "</td>";
+                                $("#groupTxt").text(timeTitle + "员工互评");
+                                td1 = "<td id='td1'>" + $("tr").length + "</td>";
                                 td2 = "<td id='td2'>" + usersA[i].name + "</td>";
-                                td3 = "<td id='td3'><input contentEditable='true' type='number' max='10' min='0' style='border: none;'>" + '' + "</input></td>";
-                                td4 = "<td>" + usersA[i].score+"</td>";
+                                td3 = "<td id='td3'><input contentEditable='true' type='number' maxlength='2' name='num' style='border: none;width:30px'>" + '' + "</input></td>";
+                                td4 = "<td>" + usersA[i].score + "</td>";
+                                $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td3 + td4 + "</tr>");
+                            } else if (( userVal.ids <= curIds[uemail] + 10 && userVal.ids > 500 ) && (userVal.ids >= curIds[uemail] - 10) && actors[uemail] == "staff" && userVal.role == "staff") {
                                 timeTitle = yearStr + "年" + monthStr + "月份 ";
-                                $("#groupTxt").text(timeTitle + "非产品组成员");
-                                $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td4 + "</tr>");
+                                $("#groupTxt").text(timeTitle + "员工互评");
+                                td1 = "<td id='td1'>" + $("tr").length + "</td>";
+                                td2 = "<td id='td2'>" + usersA[i].name + "</td>";
+                                td3 = "<td id='td3'><input contentEditable='true' type='number' maxlength='2' name='num' style='border: none;width:30px'>" + '' + "</input></td>";
+                                td4 = "<td>" + usersA[i].score + "</td>";
+                                $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td3 + td4 + "</tr>");
+                                $(td1).text(i);
+                            } else {
+                                if (curIds[uemail] == "99999") {//当前登录者为管理员账户时，所以成员
+                                    td1 = "<td id='td1'>" + $("tr").length + "</td>";
+                                    td2 = "<td id='td2'>" + usersA[i].name + "</td>";
+                                    td3 = "<td id='td3'><input contentEditable='true' type='number' name='num' style='border: none;'>" + '' + "</input></td>";
+                                    td4 = "<td>" + usersA[i].score + "</td>";
+                                    timeTitle = yearStr + "年" + monthStr + "月份 ";
+                                    $("#groupTxt").text(timeTitle + "互评数据管理");
+                                    $("#userList").append("<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td4 + "</tr>");
+                                }
+
                             }
                         }
                     }
-                }
+
             });
 
         });
@@ -397,7 +395,6 @@ function reCord(usersA){
                 $("#scoTab").css("display","block");
                 TH="<th>"+"姓 名"+"</th>"+ "<th>"+"分 数"+"</th>"+ "<th>"+"评分人"+"</th>"+ "<th>"+"互评得分"+"</th>";
                 $("#scoList").append( "<tr>"+TH+ "</tr>");
-                $("#countData").text("共 "+oldScore.length+"条 数据")
             }else{
 
                layer.msg("共 "+oldScore.length+"条 数据");
@@ -422,7 +419,6 @@ function reCord(usersA){
                     console.log(scoreIds);
 
                 //tips = oldScore[j].name + ": " + scoreIds[Name].Score + " 分";
-
             }
             for(var key in  scoreIds){
                 var sum=0;
@@ -437,7 +433,8 @@ function reCord(usersA){
                 TR="<tr class='" + userKey + "' id='" + userKey + "'>" + td1 + td2 + td3 + td4 + "</tr>";
 
                 $("#scoList").append(TR);
-               // $("#scoList").append( key+' : '+ scoreIds[key].Score+'<br />');
+
+                // $("#scoList").append( key+' : '+ scoreIds[key].Score+'<br />');
                var resultRef= wilddog.sync().ref("user/info");
                 for(i=1;i<usersA.length;i++){
                     if(key==usersA[i].name){
@@ -446,9 +443,12 @@ function reCord(usersA){
                 }
                 if(a==1){
                     resultRef.child(key).update({score:result});
-                    console.log(key+result)
+                    console.log(key+result);
+
                 }
+
             }
+            $("#countData").css("display","none")
 
         });
 
@@ -493,14 +493,7 @@ function removeSco(){
     var remRaterRef=wilddog.sync().ref("rater");//清除当前用户组打分记录
     remScoreRef.set({});
     remRaterRef.set({});
-    /*remRaterRef.child('9999').push({
-     name: "9999",
-     ids: "9999",
-     sco: "",
-     rater: "9999",
-     count: "",
-     time: timeStr
-     });*/
+
     h=0;
     var remInfoRef=wilddog.sync().ref("user/info/"); //---清楚用户信息下的得分结果
     remInfoRef.on('value', function (snapshot) {
@@ -701,11 +694,13 @@ $(document).ready(function() { //------------------------------表单验证-----
     });
 
     //Validate the form manually------点击按钮验证表单，实现用户登录
-    $("#btn-logIn").click(function () {
+    $("#btn-logIn").click(function (e) {
+        e.preventDefault();
         $('#logInForm').bootstrapValidator('validate');
         logIn();
     });
-    $("#btn-reg").click(function () {
+    $("#btn-reg").click(function (e) {
+        e.preventDefault();
         $('#regForm').bootstrapValidator('validate');
             register();
     });
@@ -719,7 +714,7 @@ $(document).ready(function() { //------------------------------表单验证-----
             $("#score-btn").click(function(strKey){//提交分数推送数据
               scoreSnap(strKey);
                 //$("#score-btn").attr("disabled", true);
-                setTimeout("location.reload()",3000);
+                setTimeout("location.reload()",2000);
             });
             $("#sort-btn").click(function(e) {//查询分数记录生成表格
                 //viewScoKey();
@@ -733,25 +728,26 @@ $(document).ready(function() { //------------------------------表单验证-----
                 $("#output").css("display","block");
             });//显示导出图标
 
-            $("#remove-btn").click(function(){
-
+            $("#remove-btn").click(function(e) {
+                e.preventDefault();
                 layer.confirm(' 确定要清除所有数据吗？', {
-                    btn: ['清除','不'] //按钮
-                }, function(){
+                    btn: ['清除', '不'] //按钮
+                }, function () {
+                    layer.msg('正在清除……请稍等', {icon: 1, time: 2000},removeSco());
 
-                    layer.msg('数据已成功清除！',{
-                        icon:1,
-                        time: 1000//2s后自动关闭
-
-                    },removeSco());
-
-                }, function(){
+                    layer.load();
+                    setTimeout(function(){
+                        layer.closeAll('loading');
+                    }, 8000);
+                    setTimeout(function() {
+                        layer.msg('数据清除成功', {icon: 1, time: 2000},location.reload());
+                    },10000)
+                }, function () {
                     layer.msg('操作已取消！', {
-                        icon:1,
-                        time: 1000
+                        icon: 1,
+                        time: 2000
                     });
                 });
-                //removeSco();
             });
             /*-----------------修改密码-------------------*/
 

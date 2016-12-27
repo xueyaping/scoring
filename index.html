@@ -16,20 +16,28 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
     <style>
-        html{height: 100%}
+        html{}
         body{font-family: "Microsoft Yahe", "微软雅黑" , Helvetica, Arial, sans-serif;
             background: url(./img/more2.png) no-repeat; background-position: top center;
-           }
+            margin: 0;padding: 0;height: 100%;overflow: hidden;
+        }
 
-        h1, h2, h3, h4, h5, h6{font-weight: 100}
+        h1, h2, h3, h4, h5, label{font-weight: 100}
         .bs-docs-section {margin-bottom: 20px;margin-top: 60px}
-        .form-control{padding:6px 30px;}
+       /* .form-control{padding:6px 30px;}*/
         .jumbotron{background: #3ca2e0;color: #ffffff;margin-bottom: 0}
         .navbar{border-radius: 0;padding-top: 15px;}
-        .navbar-default{;background: #fff;border-bottom-color: #f5f5f5; }
+        .navbar-default{background: none;border-color:transparent; border-bottom-color: #f5f5f5;-webkit-box-shadow: 0 2px 10px #eee;  box-shadow: 0 2px 10px #eee;}
         .list-group ul li.on{font-weight:bold;}
         .row{margin-left:0;margin-right: 0 }
-
+        .footer{
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin-top: 16%;
+            margin-bottom: -40px;
+            /*background-color: #f5f5f5;*/
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -64,18 +72,13 @@
             <p class="text-muted">还没有帐号?  立即 <a class="lead text-capitalize " href="./register.html">注册</a></p>
 
     </div>
-      <!--  <h1><span class="text-primary">研发部</span>绩效在线互评</h1>
-        <h3 class="led text-muted">此程序应用于研发部每月份绩效考核互评，用户注册登录后在线完成评分并提交结果。</h3>
--->
-    </div>
     <div class="text-center">
-
-        <form id="logInForm" class="form-inline" action="./panel.html" method="post">
+        <form id="logInForm" name="login" class="form-inline" action="" method="post">
             <div class="form-group">
-                <input id="em" type="email" class="form-control required" name="email" placeholder="请输入用户邮箱" required autofocus>
+                <input id="em" type="email" class="form-control required" name="email" placeholder="请输入用户邮箱" required>
             </div>
             <div class="form-group">
-                <input id="pd" type="password" class="form-control required" name="password" placeholder="请输入用户密码" required >
+                <input id="pd" type="password" class="form-control required" name="password" placeholder="请输入用户密码" required>
             </div>
 
             <div class="form-group">
@@ -85,20 +88,16 @@
 
         </form>
     </div>
-
-<footer class="navbar-fixed-bottom">
-
-    <div class="pager">
-        <nav class="" >
+</div>
+<footer class="footer">
+    <div class="container">
             <ul class="list-inline footer-links">
-                <li class="text-muted">陕西众森电能科技有限公司</li>
+                 <li class="small"><a href="http://www.gsola.cn">陕西众森能科技有限公司</a></li>
+                <li class="small text-muted">如有问题请反馈软件组薛亚平或邱龙刚</li>
 
-                <li><a href="http://www.gsola.cn">公司官网</a></li>
             </ul>
-        </nav>
+
     </div>
-
-
 </footer>
 
 

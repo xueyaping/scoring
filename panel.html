@@ -65,24 +65,27 @@
             <div class="text-center">
                 <!-- 添加新用户-->
                 <h2 class="page-header text-muted" id="groupTxt"></h2>
+                <span class="text-muted pull-left" style="margin-top: 15px">
+                    <i class="glyphicon glyphicon-hand-right"> </i> 请在评分栏所有单元格内输入0-10之间的整数，提交成功后将无法更改.
+                </span>
+
             </div>
-            <div class="form-group text-right">
-                <div class="btn-group" role="group">
-                    <a href="./panel.html" id="output" class="btn-default" role="button" style="display: none;margin-right: 5px" title="刷新">
-                        <i  class="glyphicon glyphicon-refresh text-primary pull-right"> </i>
-                    </a>
-                </div>
-                <div class="btn-group" role="group">
+            <div class="text-right">
+                <!--<div class="btn btn-group" role="group">-->
+                    <!--<a href="./panel.html" id="output" class="btn-default" role="button" style="display: none;margin-right: 5px" title="刷新">-->
+                        <!--<i  class="glyphicon glyphicon-refresh text-primary pull-right"> </i>-->
+                    <!--</a>-->
+                <!--</div>-->
+                <div class="btn btn-group" role="group">
                     <button id="score-btn" type="button" class="btn btn-primary" title="提交后将不能更改"><i class="glyphicon glyphicon-ok  small"></i>&nbsp;&nbsp; 提 交</button>
                 </div>
                <!-- <div class="btn-group" role="group">
                     <button id="sort-btn" type="button" class="btn btn-default" title="查看已评分记录计算评分结果"><i class="glyphicon glyphicon-search small"></i>&nbsp;&nbsp;查 看</button>
                 </div>-->
-
             </div>
 
-             <section >
-                <div id="userTab" class="panel panel-default">
+             <section class="">
+                 <div id="userTab" class="panel panel-default">
                     <table id="userList" class="table table-bordered table-responsive ">
                         <tr>
                             <th>ID</th>
